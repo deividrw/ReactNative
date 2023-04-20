@@ -1,33 +1,72 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native-web";
+import React, { useState } from "react";
+import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native";
 
-export default function Home() {
+export default function Atividade() {
+  const [atividade, setAtividade] = useState("");
+  const [date, setDate] = useState("");
+  const [lancarAtividades, setLancarAtividades] = useState([]);
+
+  const handleAtividadeChange = (text) => {
+    setAtividade(text);
+  };
+
+  const handleDateChange = (text) => {
+    setDate(text);
+  };
+
+  const handleReset = () => {
+    setAtividade("");
+    setDate("");
+  };
+
+  const handleLancarAtividade = () => {
+    if (atividade.trim() === "" || date.trim() === "") {
+      alert("Favor descrever atividade e data.");
+    } else {
+      setLancarAtividades([...lancarAtividades, { atividade, date }]);
+      handleReset();
+    }
+  };
+
+  const handleExcluirAtividade = (index) => {
+    setLancarAtividades(lancarAtividades.filter((_, i) => i !== index));
+  };
+
+  const renderItem = ({ item, index }) => (
+    <View style={styles.item}>
+      <Text style={styles.atividade}>{item.atividade}</Text>
+      <Text style={styles.date}>{item.date}</Text>
+      <Button
+        title="EXCLUIR"
+        onPress={() => handleExcluirAtividade(index)}
+      />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.listContainer}>
-        <ul style={styles.list}>
-          <li style={styles.atividade} >Ler um livro interessante</li>
-          <li style={styles.atividade}>Assistir a um filme novo ou uma série de TV</li>
-          <li style={styles.atividade}>Fazer uma caminhada ao ar livre em um parque ou trilha</li>
-          <li style={styles.atividade}>Experimentar uma nova receita de culinária</li>
-          <li style={styles.atividade}> Fazer uma sessão de ioga ou meditação para relaxar</li>
-          <li style={styles.atividade}>
-            Fazer uma limpeza em sua casa ou organizar sua mesa de trabalho
-          </li>
-          <li style={styles.atividade}>
-            Aprender algo novo, como tocar um instrumento musical ou uma nova
-            língua
-          </li>
-          <li style={styles.atividade}>Fazer uma aula de ginástica ou exercício físico em casa</li>
-          <li style={styles.atividade}>
-            Passar tempo com amigos ou familiares, seja pessoalmente ou por
-            vídeo chamada
-          </li>
-          <li style={styles.atividade}>
-            Fazer uma atividade criativa, como pintura, desenho ou artesanato.
-          </li>
-        </ul>
+      <Text style={styles.title}>Lista de Atividades</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Nome da Atividade"
+        onChangeText={handleAtividadeChange}
+        value={atividade}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Data da Atividade"
+        onChangeText={handleDateChange}
+        value={date}
+      />
+      <View style={styles.buttons}>
+        <Button title="Limpar" onPress={handleReset} />
+        <Button title="Lançar" onPress={handleLancarAtividade} />
       </View>
+      <FlatList
+        data={lancarAtividades}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </View>
   );
 }
@@ -35,21 +74,40 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor:"#FFC0CB"
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
   },
-  listContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  list: {
-    color: "#FF1493",
-    listStyle: "number",
-    fontFamily: "fantasy",
-  },
-
   atividade: {
-    margin: 20,
+    flex: 2,
+    marginRight: 10,
+  },
+  date: {
+    flex: 1,
   },
 });
